@@ -1,8 +1,27 @@
+Remote Leecher is a simple web app that aims to make
+transfering files in low bandwidth areas easy.
+
+A typical example would be you need files from a remote server.
+Steps to get the files with remote leecher would resemble something similiar
+
+1.) Connect a Harddisk/USB Drive on the remote server
+2.) Drag and drop files from the remote servers drive to your drive 
+3.) Request a disconnect
+4.) Arrange for harddisk/USB disk to be shipped to you
+
+While this may seem like a extreme scenario it is supprising just how often
+it occurs in non first world countries.
+
+This way also means that users do not need remote access to the server via 
+the normal means e.g. Remote Desktop or VPN
+
 Requirements :
 
 A Mongodb server : Get this from the mongodb site
 Pymono : easy_install pymongo
 Flask : easy_install Flask
+ExtJs (Latest Version) : http://www.sencha.com/products/js/download.php
+
 Note : If easy install is not found , you can get it easily via apt-get install python-setuptools
 
 Config Changes :
@@ -18,3 +37,4 @@ Firt navigate to the directory in which its located.
 Then type 'python remoteLeecher.py' in your commandline
 You can now access the server at localhost:5000 or what ever the host name of you pc is
 
+There is still quite a bit more setup and explanation that is required , they will follow soon
