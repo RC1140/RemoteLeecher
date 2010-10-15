@@ -6,7 +6,7 @@ import distutils
 from pymongo import *
 from distutils import dir_util
 
-"""Get the last requst that has been sent through the system , need to add 
+"""Get the last request that has been sent through the system , need to add 
 some expansion here so non latest copies can be performed
 """
 connection = Connection()

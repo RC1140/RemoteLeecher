@@ -2,8 +2,6 @@
 
 from flask import Flask,request,session,url_for,render_template
 import os,json,sys
-import couchdb
-import couchquery
 import smtplib
 import hashlib
 import random
@@ -114,7 +112,7 @@ def copyFolders():
 			copyRequests = db.copyrequests
 			copyRequests.insert(doc)
 			smtpsend = smtplib.SMTP('localhost')
-			smtpsend.sendmail('jameelhaffejee@gmail.com','jameel@republiccommandos.co.za','New Copy request logged')
+			smtpsend.sendmail('<enter your maill address here>','<enter your maill address here>','New Copy request logged')
 			return '{success:true,message:\'Uploaded Completed Successfully\'}'
 	else: 
 		return 'Screw You'
