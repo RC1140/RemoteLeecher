@@ -1,0 +1,17 @@
+<!doctype html>
+
+<title>Remote Leecher Browser </title>
+{% if cssCore %}
+	<link rel="stylesheet" type="text/css" href="{{cssCore}}">
+{% endif%}
+{% for coreFile in jsCore %}
+	<script src="{{ coreFile }}"></script>
+{% endfor%}
+<script type="text/javascript">
+	Ext.BLANK_IMAGE_URL = window.location+'/static/ext-3.2.1/resources/images/default/s.gif';
+
+	Ext.onReady(buildWindow);
+</script>
+{% if name %}
+	<h1>Hello {{ name }}</h1>
+{% endif %}

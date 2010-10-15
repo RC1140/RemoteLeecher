@@ -1,0 +1,20 @@
+Requirements :
+
+A Mongodb server : Get this from the mongodb site
+Pymono : easy_install pymongo
+Flask : easy_install Flask
+Note : If easy install is not found , you can get it easily via apt-get install python-setuptools
+
+Config Changes :
+
+Change line 107 to list the folders that you want to list in you treeview
+
+Running :
+There are 2 ways of running the app , via the dev server or apache
+For a example on how to setup using apache , check the Flask homepage
+
+To run it via the dev server 
+Firt navigate to the directory in which its located.
+Then type 'python remoteLeecher.py' in your commandline
+You can now access the server at localhost:5000 or what ever the host name of you pc is
+
