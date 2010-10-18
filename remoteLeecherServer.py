@@ -65,11 +65,11 @@ def outputJson(folderLocation):
 
 @app.route('/')
 def browse():
-	jsCore = ( url_for('static',filename='ext-3.2.1/adapter/ext/ext-base.js'),\
-		url_for('static',filename='ext-3.2.1/ext-all.js') , \
+	jsCore = ( url_for('static',filename='adapter/ext/ext-base.js'),\
+		url_for('static',filename='ext-all.js') , \
 		url_for('static',filename='md5.js') , \
 		url_for('static',filename='remoteleecher.js') )
-	cssCore = ( url_for('static',filename='ext-3.2.1/resources/css/ext-all.css'))
+	cssCore = ( url_for('static',filename='resources/css/ext-all.css'))
 
 	return render_template('browse.html',jsCore=jsCore,cssCore=cssCore)
 
