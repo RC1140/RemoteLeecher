@@ -7,6 +7,7 @@ if [ -d "static"]; then
 	mv ext-all-debug.js ../static
 	mv adapter ../static
 	mv resources ../static
+	mr -r ext-3.3.0
 else
 	echo "A static folder is required , please create the directory before running this or ensure you are in the remote leecher folder"
 fi

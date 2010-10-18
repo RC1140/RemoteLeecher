@@ -16,8 +16,17 @@ function buildWindow() {
 			success: function(response){
 				var data=Ext.decode(response.responseText);
 				
+
+				var viewport = new Ext.Viewport({
+					layout:'border',
+					items:[
+					     menuPanel,downloadPanel,diskPanel,queuePanel
+					 ]
+				});
+
+
 				login.close();
-				win.show();
+				viewport.show();
 				
 				Ext.Ajax.request({
 					url: baseLocation +'/getUsersQueue',
@@ -118,7 +127,59 @@ function buildWindow() {
 			}]
 		})]
 	});
+
+	var mainMenu = new Ext.menu.Menu({
+		id: 'mainMenu',
+		items: [
+		    {
+			text	: 'Request Manager',
+			listeners : {
+				'click' : function(base,evt){
+					Ext.Ajax.request({
+						url: baseLocation +'/getCustomRequest',
+						method : 'POST',
+						params : { username : cp.get('username'),autht:cp.get('authT')},
+						success: function(response){
+							var data=Ext.decode(response.responseText);
+							if(data.success == true){
+								requestStore.loadData(data);
+							}
+							
+							requestsWindow.show();
+						}   
+					});
+				}
+			}
+		    },{
+			text: 'Logout',
+			listeners : {
+				'click' : function(base,evt){
+					//Clear the user creds and reload the web page
+					cp.clear('authT');
+					cp.clear('username');
+					window.location = window.location;
+				}
+			}
+		    }
+		]
+	    });
+
+	var menuPanel = new Ext.Panel({
+		autoScroll	: true,
+		region		: 'north',
+		height		: 33,
+		items 		: [new Ext.Toolbar({
+			items : [
+				{
+					text  	: 'File',
+					iconCls	: 'bmenu',
+					menu	: mainMenu
+				} 
+			]}
+		)]
+	});
 	
+
 	var remoteTree = new Ext.tree.TreePanel({
 		useArrows	: true,
 		autoScroll	: true,
@@ -181,11 +242,11 @@ function buildWindow() {
 	});
 
 	var requestStore = new Ext.data.JsonStore({
-		root: 'request',
-		writer:writer,
+		root: 'customrequests',
 		fields: [
-			'name', 'datefilled','filled'
-		]
+			'requestName', 'datefilled','filled'
+		],
+		id : 'requestName'
 	});
 	
 	var requestsListView = new Ext.list.ListView({
@@ -196,7 +257,7 @@ function buildWindow() {
 		columns: [{
 			header: 'Name',
 			width: .5,
-			dataIndex: 'name'
+			dataIndex: 'requestName'
 		},{
 			header: 'Date Filled',
 			dataIndex: 'datefilled'
@@ -208,7 +269,7 @@ function buildWindow() {
 
 	var requestsForm = new Ext.FormPanel({
 		labelWidth	: 120,
-		url			: baseLocation+'/newRequest/',
+		url		: baseLocation+'/CustomRequest/',
 		formBind	: true,
 		title		: 'Request',
 		bodyStyle	: 'padding:5px 5px 0',
@@ -223,15 +284,22 @@ function buildWindow() {
 			text		: 'Submit Request',
 			listeners	: {
 				click	: function(){					
-					var defaultData = {
-						fullname: 'name',
-						first: 'filled'
-					};
-					var recId = 100; // provide unique id for the record
-					var r = new requestStore.recordType(defaultData, ++recId); // create new record
-					requestStore.insert(0, r);
-					requestStore.save();
-					requestStore.load();
+					var requestName = requestsForm.getForm().findField('requestname').getValue();
+					Ext.Ajax.request({
+						url: baseLocation +'/submitCustomRequest',
+						method : 'POST',
+						params : { username : cp.get('username'),autht:cp.get('authT'),requestName:requestName},
+						success: function(response){
+							var data=Ext.decode(response.responseText);
+							if(data.success == true){
+								requestStore.loadData(data);
+								Ext.Msg.alert('Warning','Yay data saved');
+							}else{
+								Ext.Msg.alert('Warning','O No something failed');
+							}
+							
+						}   
+					});
 				}
 			}
 		})]
@@ -264,16 +332,53 @@ function buildWindow() {
 				text		: 'Requests',
 				listeners	: {
 					click	: function(){
-						
-						requestsWindow.show();
+						//Only show the window after the request is done , might be nice to add a mask here
+						Ext.Ajax.request({
+							url: baseLocation +'/getCustomRequest',
+							method : 'POST',
+							params : { username : cp.get('username'),autht:cp.get('authT')},
+							success: function(response){
+								var data=Ext.decode(response.responseText);
+								if(data.success == true){
+									requestStore.loadData(data);
+								}
+								
+								requestsWindow.show();
+							}   
+						});
 					}
 				}
 		})]
 	});
+
+	var performLogin = function(){
+		baseLocation = window.location;
+		var username = simpleLogin.getForm().findField('username').getValue(),
+			password = hex_md5(simpleLogin.getForm().findField('pass').getValue());
+			
+		Ext.Ajax.request({
+			url: baseLocation +'/auth',
+			method : 'POST',
+			params : { username : username, password : password},
+			success: function(response){
+				var data=Ext.decode(response.responseText);
+				if(data.success == true){
+					loggedInUserName = username;
+					authToken = data.autht;
+					cp.set('authT',authToken);
+					cp.set('username',username);
+					finalSetup();
+				}else{
+					Ext.Msg.alert('Warning','Invalid Username or Password');
+				}
+				
+			}   
+		});
+	};
 	
 	var simpleLogin = new Ext.FormPanel({
 		labelWidth	: 75,
-		url			: baseLocation+'/login/',
+		url		: baseLocation+'/login/',
 		formBind	: true,
 		title		: 'Login',
 		bodyStyle	: 'padding:5px 5px 0',
@@ -287,39 +392,24 @@ function buildWindow() {
 		},{
 			fieldLabel	: 'Password',
 			inputType	: 'password',
-			name		: 'pass'
+			name		: 'pass',
+			listeners	: {
+				specialkey: function(field, e){
+				    if (e.getKey() == e.ENTER) {
+					performLogin();					
+				    }
+				}
+		        }
 		}],
 		buttons: [{
 			text		: 'Login',
 			listeners	: {
-				click	: function(){
-					baseLocation = window.location;
-					var username = simpleLogin.getForm().findField('username').getValue(),
-						password = hex_md5(simpleLogin.getForm().findField('pass').getValue());
-						
-					Ext.Ajax.request({
-						url: baseLocation +'/auth',
-						method : 'POST',
-						params : { username : username, password : password},
-						success: function(response){
-							var data=Ext.decode(response.responseText);
-							if(data.success == true){
-								loggedInUserName = username;
-								authToken = data.autht;
-								cp.set('authT',authToken);
-								cp.set('username',username);
-								finalSetup();
-							}else{
-								Ext.Msg.alert('Warning','Invalid Username or Password');
-							}
-							
-						}   
-					});
-				}
+				click	: performLogin
 			}
 		}]
 	});
 
+	
 	var login = new Ext.Window({
 		id		: 'myWindow',
 		closable	: false,
@@ -327,7 +417,8 @@ function buildWindow() {
 		plain		: true,
 		items		: simpleLogin
 	});
-	if(cp.get('authT')){
+
+	if(cp.get('authT') && !Ext.isEmpty(cp.get('autT'))){
 		finalSetup();
 	}else{
 		login.show();
