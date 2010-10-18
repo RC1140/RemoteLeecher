@@ -5,6 +5,7 @@ import os,json,sys
 import smtplib
 import hashlib
 import random
+import datetime
 from pymongo import *
 
 app = Flask(__name__)
@@ -66,7 +67,7 @@ def outputJson(folderLocation):
 @app.route('/')
 def browse():
 	jsCore = ( url_for('static',filename='adapter/ext/ext-base.js'),\
-		url_for('static',filename='ext-all.js') , \
+		url_for('static',filename='ext-all-debug.js') , \
 		url_for('static',filename='md5.js') , \
 		url_for('static',filename='remoteleecher.js') )
 	cssCore = ( url_for('static',filename='resources/css/ext-all.css'))
@@ -106,7 +107,7 @@ def driveStatus():
 def copyFolders():
 	if validateAuthToken(request.form['username'],request.form['autht']) :	
 		if request.method == 'POST':
-			doc = {'userRequest':request.form['folders'],'username':request.form['username']}
+			doc = {'userRequest':request.form['folders'],'username':request.form['username'],'requestDate':datetime.datetime.today().__str__()}
 			connection = Connection()
 			db = connection.remoteleecher
 			copyRequests = db.copyrequests

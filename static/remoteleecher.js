@@ -1,4 +1,9 @@
 function buildWindow() {
+	var cp = new Ext.state.CookieProvider({
+	   expires: new Date(new Date().getTime()+(1000*60*60*24*30)) //30 days
+	});
+	Ext.state.Manager.setProvider(cp);
+
 	var loggedInUserName = '',
 	baseLocation = '',
 	authToken = '',
@@ -7,7 +12,7 @@ function buildWindow() {
 		Ext.Ajax.request({
 			url: baseLocation +'/serverFolders',
 			method : 'POST',
-			params : {username:loggedInUserName,autht:authToken},
+			params : {username:cp.get('username'),autht:cp.get('authT')},
 			success: function(response){
 				var data=Ext.decode(response.responseText);
 				
@@ -17,10 +22,10 @@ function buildWindow() {
 				Ext.Ajax.request({
 					url: baseLocation +'/getUsersQueue',
 					method : 'POST',
-					params : {username:loggedInUserName,autht:authToken},
+					params : {username:cp.get('username'),autht:cp.get('authT')},
 					success: function(subresponse){
 						queueData = Ext.decode(subresponse.responseText);
-						uploadsStore.load(queueData,'request');
+						uploadsStore.loadData(queueData);
 					}   
 				});
 				
@@ -62,7 +67,7 @@ function buildWindow() {
 				Ext.Ajax.request({
 					url: baseLocation +'/calcFolderSize',
 					method : 'POST',
-					params: { folders:Ext.encode(paramData),username:loggedInUserName},
+					params: { folders:Ext.encode(paramData),username:cp.get('username')},
 					success: function(response){
 						diskPanel.activeTab.getBottomToolbar().items.items[4].setText('Total Size for selected folders : '+response.responseText);
 					}   
@@ -89,7 +94,8 @@ function buildWindow() {
 		root: 'request',
 		fields: [
 			'name'
-		]
+		],
+		id	:'id'
 	});
 	
 	var queuePanel = new Ext.Panel({
@@ -159,7 +165,7 @@ function buildWindow() {
 						Ext.Ajax.request({
 							url: baseLocation +'copyFolders',
 							method : 'POST',
-							params: { folders:Ext.encode(paramData),username:loggedInUserName,autht:authToken},
+							params: { folders:Ext.encode(paramData),username:cp.get('username'),autht:cp.get('authT')},
 							success: function(response){
 								Ext.Msg.alert('Note','This does not actually start the transfer a message has been sent to a admin to process the copy');
 							}   
@@ -300,6 +306,8 @@ function buildWindow() {
 							if(data.success == true){
 								loggedInUserName = username;
 								authToken = data.autht;
+								cp.set('authT',authToken);
+								cp.set('username',username);
 								finalSetup();
 							}else{
 								Ext.Msg.alert('Warning','Invalid Username or Password');
@@ -319,6 +327,9 @@ function buildWindow() {
 		plain		: true,
 		items		: simpleLogin
 	});
-	
-	login.show();
+	if(cp.get('authT')){
+		finalSetup();
+	}else{
+		login.show();
+	}	
 }
