@@ -31,7 +31,11 @@ m.update(password)
 user = {'username':username,'password':m.hexdigest()}
 db.users.insert(user)
 
-
 #for setting in db.settings.find():
 #	setting['indexLocations'].append('/media/DownloadWing')
-
+fileWriter = open('remoteLeecher.wsgi','w')
+fileWriter.write("\
+import RemoteLeecher.remoteLeecherServer\n\
+application = RemoteLeecher.remoteLeecherServer.app")
+fileWriter.close()
+print "A WSGI file has been created in the local directory , copy this to your web folder and use it to setup remoteleecher with apache"

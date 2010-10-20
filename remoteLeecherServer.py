@@ -95,7 +95,9 @@ def extData():
 @app.route('/serverFolders',methods=['POST'])
 def serverFolders():
 		if validateAuthToken(request.form['username'],request.form['autht']) :
-			return '[\'/downloads/complete/\',\'/media/TheLibrary/\',\'/media/DownloadWing/\']'
+			db = Connection().remoteleecher
+			return json.dumps(db.settings.find({})[0]['indexLocations'])
+			#return '[\'/downloads/complete/\',\'/media/TheLibrary/\',\'/media/DownloadWing/\']'
 		else:
 			return 'Screw You'
 

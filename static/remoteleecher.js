@@ -4,9 +4,10 @@ function buildWindow() {
 	});
 	Ext.state.Manager.setProvider(cp);
 
-	var loggedInUserName = '',
-	baseLocation = '',
-	authToken = '',
+	//This is the full URL to the application required when making ajax calls
+	var baseLocation = '',
+	//This determins the 'sub folder' that the app might be in dynamically e.g. rl/ or just /
+	baseDataPath = window.location.toString().substring(("http://" + window.location.toString().split("//")[1].split("/")[0] + "/").length) + "/"
 	finalSetup = function(){
 		baseLocation = window.location;
 		Ext.Ajax.request({
@@ -60,7 +61,7 @@ function buildWindow() {
 		animate		: true,
 		border		: false,
 		dropConfig: {appendOnly:true},
-		dataUrl		: 'rl/data/',
+		dataUrl		: baseDataPath+'data/',
 		root		: {
 			text		: 'Completed Downloads',
 			expanded	:true,
@@ -188,7 +189,7 @@ function buildWindow() {
 		animate		: true,
 		anchor		: '100% 95%',
 		border		: false,
-		dataUrl		: 'rl/data/',
+		dataUrl		: baseDataPath+'data/',
 		dropConfig: {appendOnly:true}
 	});
 
@@ -363,9 +364,7 @@ function buildWindow() {
 			success: function(response){
 				var data=Ext.decode(response.responseText);
 				if(data.success == true){
-					loggedInUserName = username;
-					authToken = data.autht;
-					cp.set('authT',authToken);
+					cp.set('authT',data.autht);
 					cp.set('username',username);
 					finalSetup();
 				}else{
