@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ -d "static"]; then 
+if [ -d 'static']; then 
 	wget http://downloads.sencha.com/extjs/ext-3.3.0.zip
 	unzip ext-3.3.0.zip
 	cd ext-3.3.0

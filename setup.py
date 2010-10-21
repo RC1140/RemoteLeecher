@@ -28,7 +28,7 @@ db.settings.insert({'indexLocations':[folderPath]})
 m = hashlib.md5()
 m.update(password)
 
-user = {'username':username,'password':m.hexdigest()}
+user = {'username':username,'password':m.hexdigest(),'email':emailAddress}
 db.users.insert(user)
 
 #for setting in db.settings.find():

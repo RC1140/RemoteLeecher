@@ -192,6 +192,31 @@ def getCustomRequests():
 	else:
 		return 'Screw You'
 	
+@app.route('/getIndexLocations',methods=['POST'])
+def getIndexLocations():
+	if validateAuthToken(request.form['username'],request.form['autht']) :
+		db = Connection().remoteleecher
+		output = '{success:true,indexlocations : [ '
 
+		for location in db.settings.find({})[0]['indexLocations']:
+			output += '{ location : \'' + location + '\'},'
+
+		output += '] }'
+		return output
+	else:
+		return 'Screw You'
+	
+@app.route('/saveIndexLocation',methods=['POST'])
+def saveIndexLocation():
+	if validateAuthToken(request.form['username'],request.form['autht']) :
+		db = Connection().remoteleecher
+	
+		settings = db.settings.find({})[0]	
+		settings['indexLocations'].append(request.form['location'])
+		db.settings.save(settings)
+		return getIndexLocations() 
+	else:
+		return 'Screw You'
+	
 if __name__ == '__main__':
         app.run(host='0.0.0.0')

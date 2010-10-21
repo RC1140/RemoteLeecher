@@ -25,7 +25,6 @@ function buildWindow() {
 					 ]
 				});
 
-
 				login.close();
 				viewport.show();
 				
@@ -165,6 +164,34 @@ function buildWindow() {
 		]
 	    });
 
+	var adminMenu = new Ext.menu.Menu({
+		id: 'mainMenu',
+		items: [
+		    {
+			text: 'Index Manager',
+			listeners : {
+				'click' : function(base,evt){
+					
+					Ext.Ajax.request({
+						url: baseLocation +'/getIndexLocations',
+						method : 'POST',
+						params : { username : cp.get('username'),autht:cp.get('authT')},
+						success: function(response){
+							var data=Ext.decode(response.responseText);
+							if(data.success == true){
+								indexManagerStore.loadData(data);
+							}
+							
+							indexManagerWindow.show();
+						}   
+					});
+
+				}
+			}
+		    }
+		]
+	    });
+
 	var menuPanel = new Ext.Panel({
 		autoScroll	: true,
 		region		: 'north',
@@ -172,9 +199,13 @@ function buildWindow() {
 		items 		: [new Ext.Toolbar({
 			items : [
 				{
-					text  	: 'File',
-					iconCls	: 'bmenu',
+					text  	: 'file',
+					iconcls	: 'bmenu',
 					menu	: mainMenu
+				},{
+					text  	: 'Admin',
+					iconcls	: 'bmenu',
+					menu	: adminMenu
 				} 
 			]}
 		)]
@@ -242,6 +273,78 @@ function buildWindow() {
 		encode: false   // <--- false causes data to be printed to jsonData config-property of Ext.Ajax#reqeust
 	});
 
+	var indexManagerStore = new Ext.data.JsonStore({
+		root: 'indexlocations',
+		fields: [
+			'location'
+		],
+		id : 'location'
+	});
+	
+	var indexManagerListView = new Ext.list.ListView({
+		store: indexManagerStore,
+		//multiSelect: true,
+		emptyText: 'No locations setup',
+		reserveScrollOffset: true,
+		columns: [{
+			header: 'Location',
+			width: .5,
+			dataIndex: 'location'
+		}]
+	});
+
+	var indexManagerForm = new Ext.FormPanel({
+		labelWidth	: 120,
+		url		: baseLocation+'/CustomRequest/',
+		formBind	: true,
+		title		: 'Request',
+		bodyStyle	: 'padding:5px 5px 0',
+		defaults	: {width: 150},
+		defaultType	: 'textfield',
+		items		: [{
+			fieldLabel	: 'Index Location (Full Folder Path)',
+			name		: 'indexlocation',
+			ref		: '../indexlocation',
+			allowBlank	: false
+		}],
+		bbar : [new Ext.Button({
+			text		: 'Add Location',
+			listeners	: {
+				click	: function(){					
+					var location = indexManagerForm.getForm().findField('indexlocation').getValue();
+					Ext.Ajax.request({
+						url: baseLocation +'/saveIndexLocation',
+						method : 'POST',
+						params : { username : cp.get('username'),autht:cp.get('authT'),location:location},
+						success: function(response){
+							var data=Ext.decode(response.responseText);
+							if(data.success == true){
+								indexManagerStore.loadData(data);
+								indexManagerForm.getForm().findField('indexlocation').setValue('');
+							}else{
+								Ext.Msg.alert('Warning','O No something failed');
+							}
+						}   
+					});
+				}
+			}
+		})]
+	});
+	
+	var indexManagerWindow = new Ext.Window({
+		id	: 'indexManagerWindow',
+		title	: 'Indexable Locations',
+		closable: true,
+		width	: 400,
+		height	: 500,
+		
+		layoutConfig: {
+			align : 'stretch',
+			pack  : 'start',
+		},
+		items	: [ indexManagerForm, indexManagerListView ]
+	});
+
 	var requestStore = new Ext.data.JsonStore({
 		root: 'customrequests',
 		fields: [
@@ -307,7 +410,7 @@ function buildWindow() {
 	});
 	
 	var requestsWindow = new Ext.Window({
-		id		: 'requestsWindow',
+		id	: 'requestsWindow',
 		title	: 'Requests',
 		closable: true,
 		width	: 400,

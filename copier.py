@@ -20,7 +20,7 @@ filesToCopy = json.loads(lastRequest)
 copyDestination = sys.argv[1]
 #print copyDestination
 finalLocations = []
-rootLocations = ('/media/DownloadWing/','/downloads/complete/')
+rootLocations = (db.settings.find({})[0]['indexLocations'])
 	
 """Loop through each of the folders the users requested for copy and remove 
 the root folder location so that they can be coppied to the same folder on 
