@@ -7,11 +7,16 @@
 {% for coreFile in jsCore %}
 	<script src="{{ coreFile }}"></script>
 {% endfor%}
+
 <script type="text/javascript">
 	Ext.BLANK_IMAGE_URL = window.location+'/static/resources/images/default/s.gif';
-
-	Ext.onReady(buildWindow);
+	Ext.namespace('remoteleecher','remoteleecher.form');
 </script>
-{% if name %}
-	<h1>Hello {{ name }}</h1>
-{% endif %}
+
+{% if jsApp %}
+	<script src="{{ jsApp }}"></script>
+{% endif%}
+
+<script type="text/javascript">
+	Ext.onReady(remoteleecher.buildWindow);
+</script>

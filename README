@@ -1,6 +1,10 @@
 Remote Leecher is a simple web app that aims to make
 transfering files in low bandwidth areas easy.
 
+At the same time it tries to do quite a few other things like indexing
+your server on request and then making it searchable via the remoteleecher
+application. 
+
 A typical example would be you need files from a remote server.
 Steps to get the files with remote leecher would resemble something similiar
 

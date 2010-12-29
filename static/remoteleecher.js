@@ -1,4 +1,4 @@
-function buildWindow() {
+remoteleecher.buildWindow = function buildWindow() {
 	var cp = new Ext.state.CookieProvider({
 	   expires: new Date(new Date().getTime()+(1000*60*60*24*30)) //30 days
 	});
@@ -8,6 +8,8 @@ function buildWindow() {
 	var baseLocation = '',
 	//This determins the 'sub folder' that the app might be in dynamically e.g. rl/ or just /
 	baseDataPath = window.location.toString().substring(("http://" + window.location.toString().split("//")[1].split("/")[0] + "/").length) + "/"
+	//So it turns out this needs to be blanked out on certain servers , depending wether this works on your server or not , comment the line out
+	baseDataPath = '';
 	finalSetup = function(){
 		baseLocation = window.location;
 		Ext.Ajax.request({
@@ -337,7 +339,7 @@ function buildWindow() {
 		})]
 	});
 	
-	var userManagerWindow = new Ext.Window({
+	/*var userManagerWindow = new Ext.Window({
 		id	: 'userManagerWindow',
 		title	: 'User Manager',
 		closable: true,
@@ -349,7 +351,7 @@ function buildWindow() {
 			pack  : 'start',
 		},
 		items	: [ indexManagerForm, indexManagerListView ]
-	});
+	});*/
 
 
 	//Index Manager 

@@ -68,11 +68,13 @@ def outputJson(folderLocation):
 def browse():
 	jsCore = ( url_for('static',filename='adapter/ext/ext-base.js'),\
 		url_for('static',filename='ext-all-debug.js') , \
-		url_for('static',filename='md5.js') , \
-		url_for('static',filename='remoteleecher.js') )
+		url_for('static',filename='md5.js') )
+
 	cssCore = ( url_for('static',filename='resources/css/ext-all.css'))
 
-	return render_template('browse.html',jsCore=jsCore,cssCore=cssCore)
+	jsApp = ( url_for('static',filename='remoteleecher.js'))
+
+	return render_template('browse.html',jsCore=jsCore,cssCore=cssCore,jsApp=jsApp)
 
 @app.route('/data/',methods=['POST','GET'])
 def extData():
