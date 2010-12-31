@@ -7,17 +7,12 @@ import hashlib
 import random
 import datetime
 from pymongo import *
+from authUtil import validateAuthToken
+from requestManager import *
 
 app = Flask(__name__)
 app.debug = True
 app.secret_key = 'kjashdfkjhsafd'
-
-def validateAuthToken(username,token):
-	db = Connection().remoteleecher
-	if db.users.find_one({'username':username,'autht':token}) != None:
-		return True
-	else:
-		return False
 
 @app.route('/auth',methods=['POST'])
 def authUser():
@@ -168,33 +163,6 @@ def getUsersQueue():
 	else:
 		return 'Screw You'
 	
-@app.route('/submitCustomRequest',methods=['POST'])
-def customRequestManager():
-	if validateAuthToken(request.form['username'],request.form['autht']) :
-		db = Connection().remoteleecher
-		requestName = request.form['requestName'].__str__()
-		doc = {'userRequest':requestName,'username':request.form['username'],'requestDate':datetime.datetime.today().__str__()}
-		db.customrequests.insert(doc)
-
-		return getCustomRequests()
-	else:
-		return '{success:false,msg:"screw you"}'
-	
-
-@app.route('/getCustomRequest',methods=['POST'])
-def getCustomRequests():
-	if validateAuthToken(request.form['username'],request.form['autht']) :
-		db = Connection().remoteleecher
-		output = '{success:true,customrequests: [ '
-		
-		for userRequest in db.customrequests.find({'username':request.form['username']}):
-			output += '{ requestName : \'' + userRequest['userRequest'] + '\'},'
-			
-		output += '] }'
-		return output
-	else:
-		return 'Screw You'
-	
 @app.route('/getIndexLocations',methods=['POST'])
 def getIndexLocations():
 	if validateAuthToken(request.form['username'],request.form['autht']) :
@@ -220,6 +188,14 @@ def saveIndexLocation():
 		return getIndexLocations() 
 	else:
 		return 'Screw You'
-	
+
+@app.route('/submitCustomRequest',methods=['POST'])
+def customRequestManager():
+	return customRequestManager()
+
+@app.route('/getCustomRequest',methods=['POST'])
+def getCustomRequests():
+	return getCustomRequests()
+
 if __name__ == '__main__':
         app.run(host='0.0.0.0')
