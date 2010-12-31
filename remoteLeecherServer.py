@@ -72,7 +72,8 @@ def browse():
 
 	cssCore = ( url_for('static',filename='resources/css/ext-all.css'))
 
-	jsApp = ( url_for('static',filename='remoteleecher.js'))
+	jsApp = ( url_for('static',filename='requestManager.js'), \
+		url_for('static',filename='remoteleecher.js'))
 
 	return render_template('browse.html',jsCore=jsCore,cssCore=cssCore,jsApp=jsApp)
 

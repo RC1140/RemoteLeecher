@@ -5,15 +5,15 @@ remoteleecher.buildWindow = function buildWindow() {
 	Ext.state.Manager.setProvider(cp);
 
 	//This is the full URL to the application required when making ajax calls
-	var baseLocation = '',
+	remoteleecher.baseLocation = '',
 	//This determins the 'sub folder' that the app might be in dynamically e.g. rl/ or just /
 	baseDataPath = window.location.toString().substring(("http://" + window.location.toString().split("//")[1].split("/")[0] + "/").length) + "/"
 	//So it turns out this needs to be blanked out on certain servers , depending wether this works on your server or not , comment the line out
 	//baseDataPath = '';
 	finalSetup = function(){
-		baseLocation = window.location;
+		remoteleecher.baseLocation = window.location;
 		Ext.Ajax.request({
-			url: baseLocation +'/serverFolders',
+			url: remoteleecher.baseLocation +'/serverFolders',
 			method : 'POST',
 			params : {username:cp.get('username'),autht:cp.get('authT')},
 			success: function(response){
@@ -31,7 +31,7 @@ remoteleecher.buildWindow = function buildWindow() {
 				viewport.show();
 				
 				Ext.Ajax.request({
-					url: baseLocation +'/getUsersQueue',
+					url: remoteleecher.baseLocation +'/getUsersQueue',
 					method : 'POST',
 					params : {username:cp.get('username'),autht:cp.get('authT')},
 					success: function(subresponse){
@@ -76,7 +76,7 @@ remoteleecher.buildWindow = function buildWindow() {
 					paramData.push(item.id);
 				});
 				Ext.Ajax.request({
-					url: baseLocation +'/calcFolderSize',
+					url: remoteleecher.baseLocation +'/calcFolderSize',
 					method : 'POST',
 					params: { folders:Ext.encode(paramData),username:cp.get('username')},
 					success: function(response){
@@ -138,16 +138,16 @@ remoteleecher.buildWindow = function buildWindow() {
 			listeners : {
 				'click' : function(base,evt){
 					Ext.Ajax.request({
-						url: baseLocation +'/getCustomRequest',
+						url: remoteleecher.baseLocation +'/getCustomRequest',
 						method : 'POST',
 						params : { username : cp.get('username'),autht:cp.get('authT')},
 						success: function(response){
 							var data=Ext.decode(response.responseText);
 							if(data.success == true){
-								requestStore.loadData(data);
+								remoteleecher.requestManager.requestStore.loadData(data);
 							}
-							
-							requestsWindow.show();
+							remoteleecher.requestManager.requestsWindow.show()	
+							//requestsWindow.show();
 						}   
 					});
 				}
@@ -175,7 +175,7 @@ remoteleecher.buildWindow = function buildWindow() {
 				'click' : function(base,evt){
 					
 					Ext.Ajax.request({
-						url: baseLocation +'/getIndexLocations',
+						url: remoteleecher.baseLocation +'/getIndexLocations',
 						method : 'POST',
 						params : { username : cp.get('username'),autht:cp.get('authT')},
 						success: function(response){
@@ -258,7 +258,7 @@ remoteleecher.buildWindow = function buildWindow() {
 						});
 						
 						Ext.Ajax.request({
-							url: baseLocation +'copyFolders',
+							url: remoteleecher.baseLocation +'copyFolders',
 							method : 'POST',
 							params: { folders:Ext.encode(paramData),username:cp.get('username'),autht:cp.get('authT')},
 							success: function(response){
@@ -321,7 +321,7 @@ remoteleecher.buildWindow = function buildWindow() {
 				click	: function(){					
 					var location = indexManagerForm.getForm().findField('indexlocation').getValue();
 					Ext.Ajax.request({
-						url: baseLocation +'/saveIndexLocation',
+						url: remoteleecher.baseLocation +'/saveIndexLocation',
 						method : 'POST',
 						params : { username : cp.get('username'),autht:cp.get('authT'),location:location},
 						success: function(response){
@@ -377,7 +377,7 @@ remoteleecher.buildWindow = function buildWindow() {
 
 	var indexManagerForm = new Ext.FormPanel({
 		labelWidth	: 120,
-		url		: baseLocation+'/CustomRequest/',
+		url		: remoteleecher.baseLocation+'/CustomRequest/',
 		formBind	: true,
 		title		: 'Request',
 		bodyStyle	: 'padding:5px 5px 0',
@@ -395,7 +395,7 @@ remoteleecher.buildWindow = function buildWindow() {
 				click	: function(){					
 					var location = indexManagerForm.getForm().findField('indexlocation').getValue();
 					Ext.Ajax.request({
-						url: baseLocation +'/saveIndexLocation',
+						url: remoteleecher.baseLocation +'/saveIndexLocation',
 						method : 'POST',
 						params : { username : cp.get('username'),autht:cp.get('authT'),location:location},
 						success: function(response){
@@ -428,86 +428,7 @@ remoteleecher.buildWindow = function buildWindow() {
 		items	: [ indexManagerForm, indexManagerListView ]
 	});
 
-	var requestStore = new Ext.data.JsonStore({
-		root: 'customrequests',
-		fields: [
-			'requestName', 'datefilled','filled'
-		],
-		id : 'requestName'
-	});
 	
-	// Request Manager
-	var requestsListView = new Ext.list.ListView({
-		store: requestStore,
-		//multiSelect: true,
-		emptyText: 'No requests to display',
-		reserveScrollOffset: true,
-		columns: [{
-			header: 'Name',
-			width: .5,
-			dataIndex: 'requestName'
-		},{
-			header: 'Date Filled',
-			dataIndex: 'datefilled'
-		},{
-			header: 'Filled',
-			dataIndex: 'filled'
-		}]
-	});
-
-	var requestsForm = new Ext.FormPanel({
-		labelWidth	: 120,
-		url		: baseLocation+'/CustomRequest/',
-		formBind	: true,
-		title		: 'Request',
-		bodyStyle	: 'padding:5px 5px 0',
-		defaults	: {width: 150},
-		defaultType	: 'textfield',
-		items		: [{
-			fieldLabel	: 'Name Of Request',
-			name		: 'requestname',
-			allowBlank	: false
-		}],
-		bbar : [new Ext.Button({
-			text		: 'Submit Request',
-			listeners	: {
-				click	: function(){					
-					var requestName = requestsForm.getForm().findField('requestname').getValue();
-					Ext.Ajax.request({
-						url: baseLocation +'/submitCustomRequest',
-						method : 'POST',
-						params : { username : cp.get('username'),autht:cp.get('authT'),requestName:requestName},
-						success: function(response){
-							var data=Ext.decode(response.responseText);
-							if(data.success == true){
-								requestStore.loadData(data);
-								Ext.Msg.alert('Warning','Yay data saved');
-							}else{
-								Ext.Msg.alert('Warning','O No something failed');
-							}
-							
-						}   
-					});
-				}
-			}
-		})]
-	});
-	
-	var requestsWindow = new Ext.Window({
-		id	: 'requestsWindow',
-		title	: 'Requests',
-		closeAction :'hide',
-		closable: true,
-		width	: 400,
-		height	: 500,
-		
-		layoutConfig: {
-			align : 'stretch',
-			pack  : 'start',
-		},
-		items	: [ requestsForm, requestsListView ]
-	});
-		
 	var win = new Ext.Window({
 		id	: 'myWindow',
 		title	: 'Remote Leecher',
@@ -523,7 +444,7 @@ remoteleecher.buildWindow = function buildWindow() {
 					click	: function(){
 						//Only show the window after the request is done , might be nice to add a mask here
 						Ext.Ajax.request({
-							url: baseLocation +'/getCustomRequest',
+							url: remoteleecher.baseLocation +'/getCustomRequest',
 							method : 'POST',
 							params : { username : cp.get('username'),autht:cp.get('authT')},
 							success: function(response){
@@ -541,12 +462,12 @@ remoteleecher.buildWindow = function buildWindow() {
 	});
 
 	var performLogin = function(){
-		baseLocation = window.location;
+		remoteleecher.baseLocation = window.location;
 		var username = simpleLogin.getForm().findField('username').getValue(),
 			password = hex_md5(simpleLogin.getForm().findField('pass').getValue());
 			
 		Ext.Ajax.request({
-			url: baseLocation +'/auth',
+			url: remoteleecher.baseLocation +'/auth',
 			method : 'POST',
 			params : { username : username, password : password},
 			success: function(response){
@@ -565,7 +486,7 @@ remoteleecher.buildWindow = function buildWindow() {
 	
 	var simpleLogin = new Ext.FormPanel({
 		labelWidth	: 75,
-		url		: baseLocation+'/login/',
+		url		: remoteleecher.baseLocation+'/login/',
 		formBind	: true,
 		title		: 'Login',
 		bodyStyle	: 'padding:5px 5px 0',
