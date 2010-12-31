@@ -9,7 +9,7 @@ remoteleecher.buildWindow = function buildWindow() {
 	//This determins the 'sub folder' that the app might be in dynamically e.g. rl/ or just /
 	baseDataPath = window.location.toString().substring(("http://" + window.location.toString().split("//")[1].split("/")[0] + "/").length) + "/"
 	//So it turns out this needs to be blanked out on certain servers , depending wether this works on your server or not , comment the line out
-	baseDataPath = '';
+	//baseDataPath = '';
 	finalSetup = function(){
 		baseLocation = window.location;
 		Ext.Ajax.request({
@@ -201,7 +201,7 @@ remoteleecher.buildWindow = function buildWindow() {
 		items 		: [new Ext.Toolbar({
 			items : [
 				{
-					text  	: 'file',
+					text  	: 'File',
 					iconcls	: 'bmenu',
 					menu	: mainMenu
 				},{
@@ -417,6 +417,7 @@ remoteleecher.buildWindow = function buildWindow() {
 		id	: 'indexManagerWindow',
 		title	: 'Indexable Locations',
 		closable: true,
+		closeAction :'hide',
 		width	: 400,
 		height	: 500,
 		
@@ -495,6 +496,7 @@ remoteleecher.buildWindow = function buildWindow() {
 	var requestsWindow = new Ext.Window({
 		id	: 'requestsWindow',
 		title	: 'Requests',
+		closeAction :'hide',
 		closable: true,
 		width	: 400,
 		height	: 500,
