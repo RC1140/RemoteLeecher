@@ -190,6 +190,13 @@ remoteleecher.buildWindow = function buildWindow() {
 
 				}
 			}
+		    },{
+			text: 'User Manager',
+			listeners : {
+				'click' : function(base,evt){
+					remoteleecher.userManager.userWindow.show();
+				}
+			}
 		    }
 		]
 	    });
@@ -235,8 +242,6 @@ remoteleecher.buildWindow = function buildWindow() {
 	});
 	remoteTree.setRootNode(root2);
 	
-	//var totalSize = Ext.form.TextArea();
-	
 	var diskPanel = new Ext.TabPanel({
 		title: 'Remote',
 		margins:'3 3 3 0', 
@@ -270,89 +275,6 @@ remoteleecher.buildWindow = function buildWindow() {
 			}),' ','-',' ',new Ext.Toolbar.TextItem({text:'Nothing To See Here'})]
 		}]
 	});
-
-	var writer = new Ext.data.JsonWriter({
-		encode: false   // <--- false causes data to be printed to jsonData config-property of Ext.Ajax#reqeust
-	});
-
-	var userManagerStore = new Ext.data.JsonStore({
-		root: 'users',
-		fields: [
-			'username','access'
-		],
-		id : 'username'
-	});
-	
-	var userManagerListView = new Ext.list.ListView({
-		store: userManagerStore,
-		//multiSelect: true,
-		emptyText: 'No Users found',
-		reserveScrollOffset: true,
-		columns: [{
-			header: 'Username',
-			width: .5,
-			dataIndex: 'username'
-		}]
-	});
-
-	var userManagerForm = new Ext.FormPanel({
-		labelWidth	: 120,
-		formBind	: true,
-		title		: 'Users',
-		bodyStyle	: 'padding:5px 5px 0',
-		defaults	: {width: 150},
-		defaultType	: 'textfield',
-		items		: [{
-			fieldLabel	: 'Users Name',
-			name		: 'username',
-			allowBlank	: false
-		},{
-			fieldLabel	: 'Email Address',
-			name		: 'emailaddress',
-			allowBlank	: false
-		},{
-			fieldLabel	: 'Password',
-			name		: 'password',
-			allowBlank	: false
-		}],
-		bbar : [new Ext.Button({
-			text		: 'Add User',
-			listeners	: {
-				click	: function(){					
-					var location = indexManagerForm.getForm().findField('indexlocation').getValue();
-					Ext.Ajax.request({
-						url: remoteleecher.baseLocation +'/saveIndexLocation',
-						method : 'POST',
-						params : { username : cp.get('username'),autht:cp.get('authT'),location:location},
-						success: function(response){
-							var data=Ext.decode(response.responseText);
-							if(data.success == true){
-								indexManagerStore.loadData(data);
-								indexManagerForm.getForm().findField('indexlocation').setValue('');
-							}else{
-								Ext.Msg.alert('Warning','O No something failed');
-							}
-						}   
-					});
-				}
-			}
-		})]
-	});
-	
-	/*var userManagerWindow = new Ext.Window({
-		id	: 'userManagerWindow',
-		title	: 'User Manager',
-		closable: true,
-		width	: 400,
-		height	: 500,
-		
-		layoutConfig: {
-			align : 'stretch',
-			pack  : 'start',
-		},
-		items	: [ indexManagerForm, indexManagerListView ]
-	});*/
-
 
 	//Index Manager 
 	var indexManagerStore = new Ext.data.JsonStore({

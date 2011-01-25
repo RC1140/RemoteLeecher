@@ -7,8 +7,8 @@ remoteleecher.userManager = function () {
 		id : '_id'
 	}),
 	
-	// Request Manager
-	usersListView = new Ext.list.ListView({
+	// User Manager
+	userListView = new Ext.list.ListView({
 		store: userStore,
 		//multiSelect: true,
 		emptyText: 'No users to display',
@@ -80,7 +80,12 @@ remoteleecher.userManager = function () {
 			align : 'stretch',
 			pack  : 'start',
 		},
-		items	: [ userForm, userListView ]
+		items		: [ userForm, userListView ],
+		listeners 	: {
+			beforeshow : function(comp){
+				alert('est');
+			}	
+		}
 	});
 
 	return {

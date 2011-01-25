@@ -9,6 +9,7 @@ import datetime
 from pymongo import *
 from authUtil import validateAuthToken
 from requestManager import *
+from userManager import *
 
 app = Flask(__name__)
 app.debug = True
@@ -68,6 +69,7 @@ def browse():
 	cssCore = ( url_for('static',filename='resources/css/ext-all.css'))
 
 	jsApp = ( url_for('static',filename='requestManager.js'), \
+		url_for('static',filename='userManager.js'), \
 		url_for('static',filename='remoteleecher.js'))
 
 	return render_template('browse.html',jsCore=jsCore,cssCore=cssCore,jsApp=jsApp)
@@ -196,6 +198,10 @@ def customRequestManager():
 @app.route('/getCustomRequest',methods=['POST'])
 def getCustomRequests():
 	return getCustomRequests()
+
+@app.route('/getUsers',methods=['POST'])
+def getUsers():
+	return getUsers()
 
 if __name__ == '__main__':
         app.run(host='0.0.0.0')
