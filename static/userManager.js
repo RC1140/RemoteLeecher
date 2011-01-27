@@ -83,7 +83,17 @@ remoteleecher.userManager = function () {
 		items		: [ userForm, userListView ],
 		listeners 	: {
 			beforeshow : function(comp){
-				alert('est');
+				Ext.Ajax.request({
+						url: remoteleecher.baseLocation +'/getUsers',
+						method : 'POST',
+						params : { username : cp.get('username'),autht:cp.get('authT')},
+						success: function(response){
+							var data=Ext.decode(response.responseText);
+							if(data.success == true){
+								userStore.loadData(data);
+							}
+						}   
+					});
 			}	
 		}
 	});
