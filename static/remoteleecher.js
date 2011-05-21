@@ -340,6 +340,7 @@ function buildWindow() {
 	var userManagerWindow = new Ext.Window({
 		id	: 'userManagerWindow',
 		title	: 'User Manager',
+		closeAction : 'hide',
 		closable: true,
 		width	: 400,
 		height	: 500,
@@ -348,7 +349,7 @@ function buildWindow() {
 			align : 'stretch',
 			pack  : 'start',
 		},
-		items	: [ indexManagerForm, indexManagerListView ]
+		items	: [ userManagerForm, userManagerListView ]
 	});
 
 
@@ -414,6 +415,7 @@ function buildWindow() {
 	var indexManagerWindow = new Ext.Window({
 		id	: 'indexManagerWindow',
 		title	: 'Indexable Locations',
+		closeAction : 'hide',
 		closable: true,
 		width	: 400,
 		height	: 500,
@@ -494,6 +496,7 @@ function buildWindow() {
 		id	: 'requestsWindow',
 		title	: 'Requests',
 		closable: true,
+		closeAction : 'hide',
 		width	: 400,
 		height	: 500,
 		

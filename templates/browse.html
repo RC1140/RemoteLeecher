@@ -1,16 +1,28 @@
 <!doctype html>
 
 <title>Remote Leecher Browser </title>
+<script type="text/javascript">
+</script>
+
 {% if cssCore %}
 	<link rel="stylesheet" type="text/css" href="{{cssCore}}">
 {% endif%}
+
 {% for coreFile in jsCore %}
 	<script src="{{ coreFile }}"></script>
 {% endfor%}
+
 <script type="text/javascript">
 	Ext.BLANK_IMAGE_URL = window.location+'/static/resources/images/default/s.gif';
+	Ext.namespace('RemoteLeecher');
+</script>
 
-	Ext.onReady(buildWindow);
+{% for userFile in jsUser %}
+	<script src="{{ userFile }}"></script>
+{% endfor%}
+
+<script type="text/javascript">
+	Ext.onReady(RemoteLeecher.buildWindow());
 </script>
 {% if name %}
 	<h1>Hello {{ name }}</h1>

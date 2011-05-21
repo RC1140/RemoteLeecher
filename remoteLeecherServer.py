@@ -67,12 +67,13 @@ def outputJson(folderLocation):
 @app.route('/')
 def browse():
 	jsCore = ( url_for('static',filename='adapter/ext/ext-base.js'),\
-		url_for('static',filename='ext-all-debug.js') , \
-		url_for('static',filename='md5.js') , \
-		url_for('static',filename='remoteleecher.js') )
+		url_for('static',filename='ext-all.js') , \
+		url_for('static',filename='md5.js') )
+	jsUser = ( url_for('static',filename='app/requestManager.js') , \
+		url_for('static',filename='app/remoteleecher.js') )
 	cssCore = ( url_for('static',filename='resources/css/ext-all.css'))
 
-	return render_template('browse.html',jsCore=jsCore,cssCore=cssCore)
+	return render_template('browse.html',jsCore=jsCore,cssCore=cssCore,jsUser=jsUser)
 
 @app.route('/data/',methods=['POST','GET'])
 def extData():
@@ -97,7 +98,6 @@ def serverFolders():
 		if validateAuthToken(request.form['username'],request.form['autht']) :
 			db = Connection().remoteleecher
 			return json.dumps(db.settings.find({})[0]['indexLocations'])
-			#return '[\'/downloads/complete/\',\'/media/TheLibrary/\',\'/media/DownloadWing/\']'
 		else:
 			return 'Screw You'
 
