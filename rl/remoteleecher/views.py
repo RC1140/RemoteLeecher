@@ -164,3 +164,12 @@ def saveIndexLocation(request):
     else:
         return 'Screw You'
 
+def getLastRequest(request):
+    connection = Connection()
+    db = connection.remoteleecher
+    lastRequest = ''
+    for request in db.copyrequests.find():
+            lastRequest = request['userRequest']
+            print request['username'] + ' : ' + request['userRequest']
+
+   return HttpResponse(lastRequest) 
