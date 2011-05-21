@@ -173,3 +173,31 @@ def getLastRequest(request):
             print request['username'] + ' : ' + request['userRequest']
 
    return HttpResponse(lastRequest) 
+
+def findFiles(request):
+    db = Connection().remoteleecher
+    returnData = []
+    for file in db.remotesearch.find({'files':{'$regex':sys.argv[1]}}):
+            returnData.append(file['rootFolder'])
+    return HttpResponse(json.dumps(returnData))
+
+
+def addNewUser(request,username,password):
+    db = Connection().remoteleecher
+    m = hashlib.md5()
+    m.update(password)
+
+    user = {'username':username,'password':m.hexdigest()}
+    db.users.insert(user)
+    return HttpResponse('New User Created')
+
+def loadSearchData(request,scanFolder):
+    db = Connection().remoteleecher
+    for data in os.walk(scanFolder):
+            print 'Loading : ' + data[0]
+            doc = {'rootFolder':data[0],'files':data[2]}
+            db.remotesearch.insert(doc)
+
+    return HttpResponse('Load Complete , please do not load this folder \
+             again as you will get duplicate data')
+
