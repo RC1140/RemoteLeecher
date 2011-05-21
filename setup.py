@@ -3,11 +3,7 @@ import os
 import sys
 import hashlib
 from pymongo import *
-from setuptools.command import easy_install
 
-#Setup the various requirements first
-easy_install.main(["-U","flask"])
-easy_install.main(["-U","pymongo"])
 #Also make sure that mongodb is install , havent found a way to make this platform agnostic
 os.system('apt-get install mongodb')
 
