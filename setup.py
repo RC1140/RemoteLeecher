@@ -35,3 +35,13 @@ import RemoteLeecher.remoteLeecherServer\n\
 application = RemoteLeecher.remoteLeecherServer.app")
 fileWriter.close()
 print "A WSGI file has been created in the local directory , copy this to your web folder and use it to setup remoteleecher with apache"
+
+echo "Paste the following into your apache file , assuming your web folder matches /var/www/rl/"
+
+echo "WSGIScriptAlias /remoteLeecher /var/www/rl/remoteLeecher.wsgi
+<Directory /var/www/rl>
+WSGIApplicationGroup %{GLOBAL}
+Allow from all
+</Directory>"
+
+

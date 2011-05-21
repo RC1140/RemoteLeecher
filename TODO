@@ -1,0 +1,2 @@
+Create 2 seperate setup files , one for server and one for the app
+Note the apache2 is required as well as mod-wsgi
